@@ -17,7 +17,7 @@ const alertBox = document.getElementById('alert-box');
 // Helper: Menampilkan Pesan Notifikasi Dinamis
 function showAlert(message, type = 'success') {
 if (!alertBox) return;
-    alertBox.textContent = massage;
+    alertBox.textContent = message;
     alertBox.className = `alert-box alert-${type}`;
     alertBox.style.display = 'block';
     setTimeout(() => {
@@ -48,7 +48,11 @@ async function loadMahasiswa(keyword = '') {
         
         //Percobaan 6-1 Langkah 4 kirim ekstrak json 
         const result = await response.json();
-                if 
+                if (result.status === 'success') {
+                    renderTable(result.data, keyword);
+                } else {
+                    showAlert(result.message, 'danger');
+                }
 
       
     } catch (error) {
@@ -172,15 +176,26 @@ if (formEdit) {
 if (formTambah) {
     formTambah.addEventListener('submit', async function (event) {
         // Percobaan 6-2 Langkah 3 
+        event.preventDefault();
 
         const dataMahasiswa = {
             // Percobaan 6-2 Langkah 4
-
+            npm: document.getElementById('npm').value.trim(),
+            nama: document.getElementById('nama').value.trim(),
+            program_studi: document.getElementById('program_studi').value,
+            angkatan: parseInt(document.getElementById('angkatan').value, 10),
+            email: document.getElementById('email').value.trim()
         };
 
         try {
             // Percobaan 6-2 Langkah 5
-            
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(dataMahasiswa)
+            });
+
+            const result = await response.json();
             if (response.ok && result.status === 'success') {
                 showAlert(result.message, 'success');
                 formTambah.reset();
